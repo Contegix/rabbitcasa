@@ -7,37 +7,40 @@
 . /etc/rc.d/init.d/functions
 
 RETVAL=0
-DAEMON=/opt/scripts/rabbitcasa/rabbitcasa.py
+PYTHON=/usr/local/bin/python
+SCRIPT=/opt/scripts/rabbitcasa/rabbitcasa.py
+DAEMON=rabbitcasa
 
 status() {
 	if [ -n "`pidofproc $DAEMON`" ] ; then
-   		echo_success
+   		echo -n "$DAEMON is running"
+		echo_success
         else
-		echo_failure
+		echo -n "$DAEMON is stopped"
+		echo_success
 	fi
-	echo
 }
 
 start() {
 	if [ -n "`pidofproc $DAEMON`" ] ; then
-        	failure "Service already running"
+        	echo -n "Service already running"
+		echo_failure
         else
-		python $DAEMON --start
+		$PYTHON $SCRIPT --start
         	sleep 3
 		status
         fi
 }
 
 stop() {
-	python $DAEMON --stop
+	$PYTHON $SCRIPT --stop
         if [ -n "`pidofproc $DAEMON`" ] ; then
-		failure "Service did not shut down cleanly"
+		echo -n "Service did not shut down cleanly"
+		echo_warning
                 killproc $DAEMON
 	fi
     	echo_success
-	echo
 }
-
 
 # See how we were called.
 case "$1" in
@@ -58,5 +61,5 @@ case "$1" in
         echo $"Usage: $0 {start|stop|restart|status}"
         exit 1
 esac
-
+echo
 exit 1

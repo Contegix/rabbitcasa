@@ -1,0 +1,6 @@
+[RabbitMQ]
+uid = root
+gid = root
+pidfile = /var/run/rabbitcasa.pid
+logfile = /var/log/rabbitcasa.log
+loglevel = error
