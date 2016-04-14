@@ -24,23 +24,24 @@ status() {
 start() {
 	if [ -n "`pidofproc $DAEMON`" ] ; then
         	echo -n "Service already running"
-		echo_failure
+		echo_warning
         else
 		$PYTHON $SCRIPT --start
-        	sleep 3
 		status
         fi
 }
 
 stop() {
-	$PYTHON $SCRIPT --stop
-        if [ -n "`pidofproc $DAEMON`" ] ; then
-		echo -n "Service did not shut down cleanly"
+	output=$($PYTHON $SCRIPT --stop 2>&1)
+	#$($PYTHON $SCRIPT --stop 2>&1 | tr -d '\012\015'
+	if [[ "$output" == "not running" ]]; then
+		echo -n "$DAEMON is already stopped"
 		echo_warning
-                killproc $DAEMON
+	else
+		status
 	fi
-    	echo_success
 }
+
 
 # See how we were called.
 case "$1" in
@@ -52,6 +53,7 @@ case "$1" in
         ;;
   restart)
         stop
+	echo
         start
         ;;
   status)

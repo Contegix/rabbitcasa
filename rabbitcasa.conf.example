@@ -1,6 +1,16 @@
-[RabbitMQ]
+[rabbitcasa]
 uid = root
 gid = root
 pidfile = /var/run/rabbitcasa.pid
 logfile = /var/log/rabbitcasa.log
-loglevel = error
+loglevel = debug
+rabbitqueue = test
+rabbitmq_url = amqp://localhost/
+rabbitrequeue = test2
+cassandra_keyspace = the_keyspace
+cassandra_keyspace_statement = CREATE KEYSPACE IF NOT EXISTS the_keyspace WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '2' }
+cassandra_cluster = a.domain.com,b.domain.com
+cassandra_table_statement = CREATE TABLE IF NOT EXISTS the_table ( key varchar, created timeuuid, hostname varchar, value varchar, PRIMARY KEY (created, key))
+cassandra_query_fields = key,hostname
+cassandra_body_field = value
+cassandra_insert_statement = insert into spot.raw_input (key,hostname, created, value) values (?, ?, NOW(), ?)
