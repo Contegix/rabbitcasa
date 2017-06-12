@@ -74,10 +74,19 @@ class RabbitCasaDaemon(simpledaemon.Daemon):
                             else:
                                 values.append(payload[field])
                         fields.append(cassandra_body_field)
-                        if 'body' in payload['body']:
-                           values.append(payload['body']['body'].strip())
+                        body = ''
+                        try:
+                            if 'body' in payload['body']:
+                                body = payload['body']['body']
+                            else:
+                                body = payload['body']
+                        except Exception as e:
+                            logger.exception('Failed to append payload')
+
+                        if body:
+                            values.append(body.strip())
                         else:
-                           values.append(payload['body'].strip())
+                            values.append(' ')
 
     			client.basic_ack(result)
 
